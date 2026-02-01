@@ -1,0 +1,63 @@
+body {
+    margin: auto;
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    background-color: #1e4d2b;
+    color: #ffff;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    padding: 16px 8px;
+    border-radius: 5px;
+    max-width: 900px;
+    width: 100%;
+}
+
+#p1-score, #p2-score {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 155px;
+    height: 120px;
+    background-color: #080001;
+    color: #FFFFFF;
+    font-family: "Arial", "Helvetica", sans-serif;
+    font-size: 90px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 3px solid #A5D6A7;
+}
+
+.btn {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+button {
+    padding: 10px 18px;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    background-color: #2E7D32;
+    border-radius: 5px;
+    border: 2px solid #A5D6A7;
+    color: #ffffff; 
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4CAF50;
+    color: #ffffff;
+}
+
+.player-board {
+    padding: 0 20px;
+}
