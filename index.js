@@ -26,9 +26,7 @@ function playerOneScore() {
     p2Score = result.opponentScore
     p1GameScore = result.playerGameScore
 
-    p2ScoreEl.textContent = p2Score
-    p1ScoreEl.textContent = p1Score
-    p1GameEl.textContent = "GAMES: " + p1GameScore
+    displayScore(p1Score, p2Score, p1GameScore, p1ScoreEl, p2ScoreEl, p1GameEl)
 }
 
 function playerTwoScore() {
@@ -39,9 +37,7 @@ function playerTwoScore() {
     p1Score = result.opponentScore
     p2GameScore = result.playerGameScore
 
-    p1ScoreEl.textContent = p1Score
-    p2ScoreEl.textContent = p2Score
-    p2GameEl.textContent = "GAMES: " + p2GameScore
+    displayScore(p2Score, p1Score, p2GameScore, p2ScoreEl, p1ScoreEl, p2GameEl)
 }
 
 /* 
@@ -83,4 +79,10 @@ function resolveTennisPoint(playerScore, opponentScore, playerGameScore) {
         playerScore = 40
     }
     return { playerScore, opponentScore, playerGameScore }
+}
+
+function displayScore(playerScore, opponentScore, playerGameScore, playerScoreEl, opponentScoreEl, playerGameScoreEl) {
+    opponentScoreEl.textContent = opponentScore
+    playerScoreEl.textContent = playerScore
+    playerGameScoreEl.textContent = "GAMES: " + playerGameScore
 }
