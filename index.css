@@ -36,6 +36,10 @@ body {
     border: 3px solid #A5D6A7;
 }
 
+.total-game {
+    display: flex;
+}
+
 .btn {
     display: flex;
     justify-content: space-evenly;
