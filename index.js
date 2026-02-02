@@ -4,12 +4,12 @@
  * ===========================================================
  */ 
 let p1ScoreEl = document.getElementById("p1-score")
-let p1Score = Number(p1ScoreEl.textContent)
+let p1Score = 0
 let p1GameEl = document.getElementById("p1-total-games")
 let p1GameScore = 0
 
 let p2ScoreEl = document.getElementById("p2-score")
-let p2Score = Number(p2ScoreEl.textContent)
+let p2Score = 0
 let p2GameEl = document.getElementById("p2-total-games")
 let p2GameScore = 0
 
@@ -19,23 +19,27 @@ let p2GameScore = 0
  * ===========================================================
  */ 
 function playerOneScore() {
-    p1Score = evaluateScore(p1Score)
+    let p1CurrentScore = evaluateScore(p1Score, p2Score)
+    const result = resolveTennisPoint(p1CurrentScore, p2Score, p1GameScore)
 
-    if (p1Score === "GAME") {
-        p1GameScore += 1
-        p1Score = 0
-    }
+    p1Score = result.playerScore
+    p2Score = result.opponentScore
+    p1GameScore = result.playerGameScore
+
+    p2ScoreEl.textContent = p2Score
     p1ScoreEl.textContent = p1Score
     p1GameEl.textContent = "GAMES: " + p1GameScore
 }
 
 function playerTwoScore() {
-    p2Score = evaluateScore(p2Score)
+    let p2CurrentScore = evaluateScore(p2Score, p1Score)
+    const result = resolveTennisPoint(p2CurrentScore, p1Score, p2GameScore)
 
-    if (p2Score === "GAME") {
-        p2GameScore += 1
-        p2Score = 0
-    }
+    p2Score = result.playerScore
+    p1Score = result.opponentScore
+    p2GameScore = result.playerGameScore
+
+    p1ScoreEl.textContent = p1Score
     p2ScoreEl.textContent = p2Score
     p2GameEl.textContent = "GAMES: " + p2GameScore
 }
@@ -45,18 +49,38 @@ function playerTwoScore() {
  * HELPER FUNCTIONS
  * ===========================================================
  */ 
-function evaluateScore(score) {
-    if (score === 0) score = 15
-    else if (score === 15) score = 30
-    else if (score === 30) score = 40
-    else if (score === 40) {
-        if (p2Score !== 40) {
+function evaluateScore(playerScore, opponentScore) {
+    if (playerScore === 0) playerScore = 15
+    else if (playerScore === 15) playerScore = 30
+    else if (playerScore === 30) playerScore = 40
+    else if (playerScore === 40) {
+        if (opponentScore !== 40 && opponentScore !== "AD") {
             return "GAME"
         } else {
-            return "AD"
-        }
-    } else if (score === "AD") {
+            if (opponentScore === 40) {
+                return "AD"
+            } else {
+                return "DEUCE"
+            }
+        }  
+    } else if (playerScore === "AD") {
         return "GAME"
     }
-    return score
+    return playerScore
+}
+
+function resolveTennisPoint(playerScore, opponentScore, playerGameScore) {
+    if (playerScore === "GAME") {
+        playerGameScore += 1
+        playerScore = 0
+        opponentScore = 0
+    }
+    if (playerScore === "DEUCE") {
+        playerScore = 40
+        opponentScore = 40
+    }
+    if (playerScore === "AD" && opponentScore === "AD") {
+        playerScore = 40
+    }
+    return { playerScore, opponentScore, playerGameScore }
 }
