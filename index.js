@@ -24,40 +24,28 @@ let p2SetScore = ""
  */ 
 function playerOneScore() {
     let p1CurrentScore = evaluateScore(p1Score, p2Score)
-    const result = resolveTennisPoint(p1CurrentScore, p2Score, p1GameScore)
+    const result = resolveTennisPoint(p1CurrentScore, p2Score, p1GameScore, p2GameScore, p1SetScore)
 
     p1Score = result.playerScore
     p2Score = result.opponentScore
     p1GameScore = result.playerGameScore
+    p2GameScore = result.opponentGameScore
+    p1SetScore = result.playerSetScore
 
-    if (checkSetPoint(p1GameScore)) {
-        p1Score = 0
-        p2Score = 0
-        p1GameScore = 0
-        p2GameScore = 0
-        p1SetScore += "🎾"
-    }
-
-    displayScore(p1Score, p2Score, p1GameScore, p1ScoreEl, p2ScoreEl, p1GameEl, p1SetScore, p1SetEl)
+    displayScore(p1Score, p2Score, p1GameScore, p2GameScore, p1ScoreEl, p2ScoreEl, p1GameEl, p2GameEl, p1SetScore, p1SetEl)
 }
 
 function playerTwoScore() {
     let p2CurrentScore = evaluateScore(p2Score, p1Score)
-    const result = resolveTennisPoint(p2CurrentScore, p1Score, p2GameScore)
+    const result = resolveTennisPoint(p2CurrentScore, p1Score, p2GameScore, p1GameScore, p2SetScore)
 
     p2Score = result.playerScore
     p1Score = result.opponentScore
     p2GameScore = result.playerGameScore
+    p1GameScore = result.opponentGameScore
+    p2SetScore = result.playerSetScore
 
-    if (checkSetPoint(p2GameScore)) {
-        p1Score = 0
-        p2Score = 0
-        p1GameScore = 0
-        p2GameScore = 0
-        p2SetScore += "🎾"
-    }
-
-    displayScore(p2Score, p1Score, p2GameScore, p2ScoreEl, p1ScoreEl, p2GameEl, p2SetScore, p2SetEl)
+    displayScore(p2Score, p1Score, p2GameScore, p1GameScore, p2ScoreEl, p1ScoreEl, p2GameEl, p1GameEl, p2SetScore, p2SetEl)
 }
 
 /* 
@@ -85,7 +73,7 @@ function evaluateScore(playerScore, opponentScore) {
     return playerScore
 }
 
-function resolveTennisPoint(playerScore, opponentScore, playerGameScore) {
+function resolveTennisPoint(playerScore, opponentScore, playerGameScore, opponentGameScore, playerSetScore) {
     if (playerScore === "GAME") {
         playerGameScore += 1
         playerScore = 0
@@ -98,19 +86,38 @@ function resolveTennisPoint(playerScore, opponentScore, playerGameScore) {
     if (playerScore === "AD" && opponentScore === "AD") {
         playerScore = 40
     }
-    return { playerScore, opponentScore, playerGameScore }
+
+    if (checkSetPoint(playerGameScore, opponentGameScore) == "SETPOINT") {
+        playerSetScore += "🎾 " + "(" + playerGameScore + "-" + opponentGameScore + "), "
+        playerScore = 0
+        opponentScore = 0
+        playerGameScore = 0
+        opponentGameScore = 0
+    } else if (checkSetPoint(playerGameScore, opponentGameScore) == "TIEBREAK") {
+        // TODO: ADD TIEBREAK LOGIC
+    }
+
+    return { playerScore, opponentScore, playerGameScore, opponentGameScore, playerSetScore }
 }
 
-function displayScore(playerScore, opponentScore, playerGameScore, playerScoreEl, opponentScoreEl, playerGameScoreEl, playerSetScore, playerSetScoreEl) {
+function displayScore(playerScore, opponentScore, playerGameScore, opponentGameScore, playerScoreEl, opponentScoreEl, playerGameScoreEl, opponentGameScoreEl, playerSetScore, playerSetScoreEl) {
     opponentScoreEl.textContent = opponentScore
     playerScoreEl.textContent = playerScore
     playerGameScoreEl.textContent = "GAMES: " + playerGameScore
+    opponentGameScoreEl.textContent = "GAMES: " + opponentGameScore
     playerSetScoreEl.textContent = "SETS: " + playerSetScore
 }
 
-function checkSetPoint(playerGameScore) {
-    if (playerGameScore == 6) {
-        return true;
+function checkSetPoint(playerGameScore, opponentGameScore) {
+    if (playerGameScore >= 6 && (playerGameScore - opponentGameScore) >= 2) {
+        return "SETPOINT";
     }
-    return false;
+    else if ((playerGameScore >= 6 && opponentGameScore >= 6) && (playerGameScore === opponentGameScore)) {
+        return "TIEBREAK"
+    }
+    return "NOTSETPOINT"
+}
+
+function tiebreak(playerScore, opponentScore, playerGameScore, opponentGameScore) {
+    // CODE HERE
 }
