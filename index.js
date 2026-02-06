@@ -17,6 +17,8 @@ let p2GameScore = 0
 let p2SetEl = document.getElementById("p2-total-sets")
 let p2SetScore = ""
 
+let isTieBreak = false
+
 /* 
  * ===========================================================
  * MAIN LOGIC
@@ -54,6 +56,9 @@ function playerTwoScore() {
  * ===========================================================
  */ 
 function evaluateScore(playerScore, opponentScore) {
+    if (isTieBreak === true) {
+        playerScore += 1
+    }
     if (playerScore === 0) playerScore = 15
     else if (playerScore === 15) playerScore = 30
     else if (playerScore === 30) playerScore = 40
@@ -74,27 +79,41 @@ function evaluateScore(playerScore, opponentScore) {
 }
 
 function resolveTennisPoint(playerScore, opponentScore, playerGameScore, opponentGameScore, playerSetScore) {
-    if (playerScore === "GAME") {
-        playerGameScore += 1
-        playerScore = 0
-        opponentScore = 0
-    }
-    if (playerScore === "DEUCE") {
-        playerScore = 40
-        opponentScore = 40
-    }
-    if (playerScore === "AD" && opponentScore === "AD") {
-        playerScore = 40
-    }
 
-    if (checkSetPoint(playerGameScore, opponentGameScore) == "SETPOINT") {
-        playerSetScore += "🎾 " + "(" + playerGameScore + "-" + opponentGameScore + "), "
-        playerScore = 0
-        opponentScore = 0
-        playerGameScore = 0
-        opponentGameScore = 0
-    } else if (checkSetPoint(playerGameScore, opponentGameScore) == "TIEBREAK") {
-        // TODO: ADD TIEBREAK LOGIC
+    if (isTieBreak === true) {
+        // TIEBREAK LOGIC HERE
+        const result = handleTieBreak(playerSetScore, playerGameScore, opponentGameScore, playerScore, opponentScore, isTieBreak)
+        playerGameScore = result.playerGameScore
+        playerScore = result.playerScore
+        opponentScore = result.opponentScore
+        playerSetScore = result.playerSetScore
+        isTieBreak = result.isTieBreak
+    }
+    else {
+        if (playerScore === "GAME") {
+            playerGameScore += 1
+            playerScore = 0
+            opponentScore = 0
+        }
+        if (playerScore === "DEUCE") {
+            playerScore = 40
+            opponentScore = 40
+        }
+        if (playerScore === "AD" && opponentScore === "AD") {
+            playerScore = 40
+        }
+    
+        if (checkSetPoint(playerGameScore, opponentGameScore) == "SETPOINT") {
+            playerSetScore += "🎾 " + "(" + playerGameScore + "-" + opponentGameScore + "), "
+            playerScore = 0
+            opponentScore = 0
+            playerGameScore = 0
+            opponentGameScore = 0
+        } else if (checkSetPoint(playerGameScore, opponentGameScore) == "TIEBREAK") {
+            isTieBreak = true
+            playerScore = 0
+            opponentScore = 0
+        }
     }
 
     return { playerScore, opponentScore, playerGameScore, opponentGameScore, playerSetScore }
@@ -110,14 +129,22 @@ function displayScore(playerScore, opponentScore, playerGameScore, opponentGameS
 
 function checkSetPoint(playerGameScore, opponentGameScore) {
     if (playerGameScore >= 6 && (playerGameScore - opponentGameScore) >= 2) {
-        return "SETPOINT";
+        return "SETPOINT"
     }
-    else if ((playerGameScore >= 6 && opponentGameScore >= 6) && (playerGameScore === opponentGameScore)) {
+    else if (playerGameScore === 6 && opponentGameScore === 6) {
         return "TIEBREAK"
     }
     return "NOTSETPOINT"
 }
 
-function tiebreak(playerScore, opponentScore, playerGameScore, opponentGameScore) {
+function handleTieBreak(playerSetScore, playerGameScore, opponentGameScore, playerScore, opponentScore, isTieBreak) {
     // CODE HERE
+    if (playerScore >= 7 && (playerScore - opponentScore) >= 2) {
+        playerScore = 0
+        opponentScore = 0
+        playerGameScore += 1
+        playerSetScore += "🎾 " + "(" + playerGameScore + "-" + opponentGameScore + "), "
+        isTieBreak = false
+    }
+    return { playerScore, opponentScore, playerGameScore, playerSetScore, isTieBreak }
 }
